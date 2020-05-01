@@ -3,6 +3,7 @@ package com.example.animals.viewmodel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
+import com.example.animals.di.AppModule
 import com.example.animals.di.DaggerViewModelComponent
 import com.example.animals.model.Animal
 import com.example.animals.model.AnimalApiService
@@ -25,7 +26,11 @@ class ListViewModel(application: Application) : AndroidViewModel(application) {
 
 
     init {
-        DaggerViewModelComponent.create().inject(this)
+        //cannot simplu .create() anymore because AppModule takes a parameter of Application unlike the other modules, so need to build it with the application passed.
+        DaggerViewModelComponent.builder().appModule(AppModule(getApplication()))
+            .build()
+            .inject(this)
+
     }
 
     /* Why use AndroidViewModel and Applications in our ViewModel, why not extend the ViewModel class which doesn't require 'Application'?
