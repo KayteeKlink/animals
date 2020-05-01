@@ -17,6 +17,7 @@ import com.bumptech.glide.request.transition.Transition
 import com.example.animals.R
 import com.example.animals.databinding.FragmentDetailBinding
 import com.example.animals.model.Animal
+import com.example.animals.model.AnimalPalette
 
 
 class DetailFragment : Fragment() {
@@ -62,7 +63,7 @@ fun setupBackgroundColor(url: String) {
                     .generate() { palette ->
                         //some of these colors might be null for some of the images, so irl would prob wanna check if it's null and if so use a new colors
                         val intColor = palette?.lightMutedSwatch?.rgb ?: 0 //if it is null, setting it to 0 (so that it's never be null while we're using it)
-                        dataBinding.animalLayout.setBackgroundColor(intColor)
+                        dataBinding.pallette = AnimalPalette(intColor) //no longer have id's and retrive our elements in this code, instead we use databinding to bind the info directly from our code into our layout
                     }
             }
 

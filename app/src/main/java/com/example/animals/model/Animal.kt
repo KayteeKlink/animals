@@ -126,3 +126,5 @@ data class Speed( //turned this into a Parcel to our nav argument can use the An
     }
 }
 
+data class AnimalPalette(var color: Int)
+

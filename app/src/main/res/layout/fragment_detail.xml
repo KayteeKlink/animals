@@ -7,10 +7,14 @@
         <variable
             name="animal"
             type="com.example.animals.model.Animal" />
+
+        <variable
+            name="pallette"
+            type="com.example.animals.model.AnimalPalette" />
     </data>
 
     <LinearLayout
-        android:id="@+id/animalLayout"
+        android:background="@{pallette.color}"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center_horizontal"
