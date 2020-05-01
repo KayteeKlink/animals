@@ -3,6 +3,7 @@ package com.example.animals.viewmodel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
+import com.example.animals.di.DaggerViewModelComponent
 import com.example.animals.model.Animal
 import com.example.animals.model.AnimalApiService
 import com.example.animals.model.ApiKey
@@ -11,9 +12,21 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
+import javax.inject.Inject
 
 //this will expose the variables, instantiate the var's with some values, and allow the view to connect with them
 class ListViewModel(application: Application) : AndroidViewModel(application) {
+
+    @Inject
+    lateinit var apiService: AnimalApiService
+
+    @Inject
+    lateinit var prefs: SharePreferencesHelper
+
+
+    init {
+        DaggerViewModelComponent.create().inject(this)
+    }
 
     /* Why use AndroidViewModel and Applications in our ViewModel, why not extend the ViewModel class which doesn't require 'Application'?
         Bc of how our backend works, our api will require a key, and we will need to store that key in our Shared Preference, in our local app.
@@ -33,9 +46,7 @@ class ListViewModel(application: Application) : AndroidViewModel(application) {
 
     private val disposable = CompositeDisposable()
     //a 'disposable 'is an rxJava construct that takes the result of an observable and is able to dismiss it when the lifecycle of the view model is finished
-    private val apiService = AnimalApiService()
 
-    private val prefs = SharePreferencesHelper(getApplication())
 
     private var invalidApiKey = false
 

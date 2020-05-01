@@ -46,7 +46,7 @@ class AnimalListAdapter(private val animalList: ArrayList<Animal>) :
         for (animal in animalList) {
             if (v.tag == animal.name) {
                 val action =
-                    ListFragmentDirections.actionDetail(animal) //this is the argument we definted in the navigation detailFragment
+                    ListFragmentDirections.actionDetail(animal) //this is the argument we defined in the navigation detailFragment
                 Navigation.findNavController(v).navigate(action) //doesn't matter which view we pass cause the system will go up the hierarchy and find what it needs here, so can pass any view
             }
         }
