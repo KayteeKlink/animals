@@ -4,7 +4,9 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.example.animals.di.AppModule
+import com.example.animals.di.CONTEXT_APP
 import com.example.animals.di.DaggerViewModelComponent
+import com.example.animals.di.TypeOfContext
 import com.example.animals.model.Animal
 import com.example.animals.model.AnimalApiService
 import com.example.animals.model.ApiKey
@@ -22,12 +24,14 @@ class ListViewModel(application: Application) : AndroidViewModel(application) {
     lateinit var apiService: AnimalApiService
 
     @Inject
+    @field:TypeOfContext(CONTEXT_APP) //now since there are two types of SharePreferencesHelper we provide in PrefsModule, we need to specify which one we're providing here via @field
     lateinit var prefs: SharePreferencesHelper
 
 
     init {
         //cannot simplu .create() anymore because AppModule takes a parameter of Application unlike the other modules, so need to build it with the application passed.
-        DaggerViewModelComponent.builder().appModule(AppModule(getApplication()))
+        DaggerViewModelComponent.builder() //ViewModelComponent has 3 modules! modules = [ApiModule::class, PrefsModule::class, AppModule::class], hence the @Injects above
+            .appModule(AppModule(getApplication())) //^even tho has 3 modules and is providing from all of them, AppModule is the only one with a parameter which is why it gets this special line of code to provide the App Context parameter it wants.
             .build()
             .inject(this)
 
