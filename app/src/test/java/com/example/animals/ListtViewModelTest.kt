@@ -6,6 +6,7 @@ import com.example.animals.di.AppModule
 import com.example.animals.di.DaggerViewModelComponent
 import com.example.animals.model.Animal
 import com.example.animals.model.AnimalApiService
+import com.example.animals.model.ApiKey
 import com.example.animals.util.SharePreferencesHelper
 import com.example.animals.viewmodel.ListViewModel
 import io.reactivex.Scheduler
@@ -36,7 +37,7 @@ class ListtViewModelTest {
     val application =
         Mockito.mock(Application::class.java) //app is not created as lateinit var bc we need it right away to instantiate the ListViewModel class below
 
-    var listViewModel = ListViewModel(application)
+    var listViewModel = ListViewModel(application, true) //this true will tell the listViewModel to go through the test constructor
 
     private val key = "Test key"
 
@@ -89,5 +90,22 @@ class ListtViewModelTest {
         Assert.assertEquals(1, listViewModel.animals.value?.size)
         Assert.assertEquals(false, listViewModel.loadError.value) //checks that we're not getting any errors
         Assert.assertEquals(false, listViewModel.loading.value) //assert that loading boolean has false value also
+    }
+
+    @Test
+    fun getAnimalError() {
+        Mockito.`when`(prefs.getApiKey()).thenReturn(key)
+
+        val testSingle = Single.error<List<Animal>>(Throwable())
+        val keySingle = Single.just(ApiKey("OK", key))
+
+        Mockito.`when`(animalService.getAnimals(key)).thenReturn(testSingle)
+        Mockito.`when`(animalService.getApiKey()).thenReturn(keySingle)
+
+        listViewModel.refresh()
+
+        Assert.assertEquals(null, listViewModel.animals.value)
+        Assert.assertEquals(false, listViewModel.loading.value)
+        Assert.assertEquals(true, listViewModel.loadError.value)
     }
 }
