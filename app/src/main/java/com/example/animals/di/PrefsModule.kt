@@ -22,9 +22,8 @@ class PrefsModule {
     }
 
     //let's say we wanted to provide share prefs with activity context, instead of application context. Dagger Qualifier can let us do that
-
     @TypeOfContext(CONTEXT_ACTIVITY)
-    fun proficeActivitySharePreferences(activity: AppCompatActivity): SharePreferencesHelper {
+    fun provideActivitySharePreferences(activity: AppCompatActivity): SharePreferencesHelper {
         return SharePreferencesHelper(activity)
     }
 
