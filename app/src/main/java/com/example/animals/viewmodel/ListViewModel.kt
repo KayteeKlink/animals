@@ -70,7 +70,7 @@ class ListViewModel(application: Application) : AndroidViewModel(application) {
 
     fun refresh() {
         inject()
-        //will start the retreival of data from back end, eventually
+        //will start the retrieval of data from back end, eventually
         loading.value = true //starts the loading
 
         invalidApiKey = false

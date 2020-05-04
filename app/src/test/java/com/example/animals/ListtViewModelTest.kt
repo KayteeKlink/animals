@@ -37,7 +37,10 @@ class ListtViewModelTest {
     val application =
         Mockito.mock(Application::class.java) //app is not created as lateinit var bc we need it right away to instantiate the ListViewModel class below
 
-    var listViewModel = ListViewModel(application, true) //this true will tell the listViewModel to go through the test constructor
+    var listViewModel = ListViewModel(
+        application,
+        true
+    ) //this true will tell the listViewModel to go through the test constructor
 
     private val key = "Test key"
 
@@ -79,7 +82,8 @@ class ListtViewModelTest {
         Mockito.`when`(prefs.getApiKey()).thenReturn(key)
         //if we get an api call then we return a key (when we already have a key in our system?)
         val animal = Animal("cow", null, null, null, null, null, null)
-        val animalList = listOf(animal) //gives us the list of animals we want to return when the viewmodel does a call to getAnimals
+        val animalList =
+            listOf(animal) //gives us the list of animals we want to return when the viewmodel does a call to getAnimals
 
         val testSingle = Single.just(animalList)
 
@@ -88,8 +92,14 @@ class ListtViewModelTest {
         listViewModel.refresh()
 
         Assert.assertEquals(1, listViewModel.animals.value?.size)
-        Assert.assertEquals(false, listViewModel.loadError.value) //checks that we're not getting any errors
-        Assert.assertEquals(false, listViewModel.loading.value) //assert that loading boolean has false value also
+        Assert.assertEquals(
+            false,
+            listViewModel.loadError.value
+        ) //checks that we're not getting any errors
+        Assert.assertEquals(
+            false,
+            listViewModel.loading.value
+        ) //assert that loading boolean has false value also
     }
 
     @Test
@@ -107,5 +117,43 @@ class ListtViewModelTest {
         Assert.assertEquals(null, listViewModel.animals.value)
         Assert.assertEquals(false, listViewModel.loading.value)
         Assert.assertEquals(true, listViewModel.loadError.value)
+    }
+
+    @Test
+    fun getKeySuccess() {
+        Mockito.`when`(prefs.getApiKey()).thenReturn(null)
+
+        val apiKey = ApiKey("OK", key)
+
+        val keySingle = Single.just(apiKey)
+
+        Mockito.`when`(animalService.getApiKey()).thenReturn(keySingle)
+
+        val animal = Animal("cow", null, null, null, null, null, null)
+        val animalsList = listOf(animal)
+
+        val testSingle = Single.just(animalsList)
+
+        Mockito.`when`(animalService.getAnimals(key)).thenReturn(testSingle)
+
+        listViewModel.refresh()
+
+        Assert.assertEquals(false, listViewModel.loadError.value)
+        Assert.assertEquals(false, listViewModel.loading.value)
+        Assert.assertEquals(1, listViewModel.animals.value?.size)
+        //cannot get to get animals with out the success of geKey^
+    }
+
+    @Test
+    fun getKeyFailure() {
+        val keySingle = Single.error<ApiKey>(Throwable())
+
+        Mockito.`when`(animalService.getApiKey()).thenReturn(keySingle)
+
+        listViewModel.hardRefresh()
+
+        Assert.assertEquals(false, listViewModel.loading.value)
+        Assert.assertEquals(true, listViewModel.loadError.value)
+        Assert.assertEquals(null, listViewModel.animals.value)
     }
 }
