@@ -20,6 +20,12 @@ import javax.inject.Inject
 //this will expose the variables, instantiate the var's with some values, and allow the view to connect with them
 class ListViewModel(application: Application) : AndroidViewModel(application) {
 
+    constructor(application: Application, test: Boolean = true) : this(application) {
+        injected = true
+    }
+
+    private var injected = false
+
     @Inject
     lateinit var apiService: AnimalApiService
 
@@ -28,12 +34,15 @@ class ListViewModel(application: Application) : AndroidViewModel(application) {
     lateinit var prefs: SharePreferencesHelper
 
 
-    init {
-        //cannot simplu .create() anymore because AppModule takes a parameter of Application unlike the other modules, so need to build it with the application passed.
-        DaggerViewModelComponent.builder() //ViewModelComponent has 3 modules! modules = [ApiModule::class, PrefsModule::class, AppModule::class], hence the @Injects above
-            .appModule(AppModule(getApplication())) //^even tho has 3 modules and is providing from all of them, AppModule is the only one with a parameter which is why it gets this special line of code to provide the App Context parameter it wants.
-            .build()
-            .inject(this)
+    fun inject() {
+        // if come through main contructor (real life) then injected = false and this init code will run, if come through test constructor this code will not run
+        if(!injected) {
+            //cannot simplu .create() anymore because AppModule takes a parameter of Application unlike the other modules, so need to build it with the application passed.
+            DaggerViewModelComponent.builder() //ViewModelComponent has 3 modules! modules = [ApiModule::class, PrefsModule::class, AppModule::class], hence the @Injects above
+                .appModule(AppModule(getApplication())) //^even tho has 3 modules and is providing from all of them, AppModule is the only one with a parameter which is why it gets this special line of code to provide the App Context parameter it wants.
+                .build()
+                .inject(this)
+        }
 
     }
 
@@ -60,6 +69,7 @@ class ListViewModel(application: Application) : AndroidViewModel(application) {
     private var invalidApiKey = false
 
     fun refresh() {
+        inject()
         //will start the retreival of data from back end, eventually
         loading.value = true //starts the loading
 
@@ -78,6 +88,7 @@ class ListViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun hardRefresh() { //will not check if there's a key in the preferences, call this method in out list fragment
+        inject()
         loading.value = true
         getKey()
     }

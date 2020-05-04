@@ -9,14 +9,14 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
 @Module
-class ApiModule {
+open class ApiModule {
     //created this first
 
     private val BASE_URL = "https://us-central1-apis-4674e.cloudfunctions.net/"
 
     //how we tell what information we will provide
     @Provides //allows us to be able to inject the return type (AnimalApi) into wherever we want
-    fun provideAnimalApi(): AnimalApi {
+    open fun provideAnimalApi(): AnimalApi {
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create()) //converts to JSON objects. This converts the JSON we retrieve from the backend to the list of the model in our Animal.kt data class
@@ -27,7 +27,7 @@ class ApiModule {
     }
 
     @Provides
-    fun provideAnimalApiService(): AnimalApiService {
+    open fun provideAnimalApiService(): AnimalApiService {
         return AnimalApiService()
     }
 }

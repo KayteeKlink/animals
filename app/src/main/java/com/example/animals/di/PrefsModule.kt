@@ -10,14 +10,14 @@ import javax.inject.Qualifier
 import javax.inject.Singleton
 
 @Module
-class PrefsModule {
+open class PrefsModule { //have to mark class as 'open' so is can be extended in PrefsModuleTests.kt
 
     @Provides
     @Singleton //a single instance of a class, bc share prefs helper accesses share prefs which is resource in the android system, that resourcce is the storage of the shared preferences, so we don't want multiple instances accessing resources at the same time, instead a single instance that will access a single resource.
     //^this way objects don't access information before another instance of it changes the info, there's just one instance up to date
     //THIS MEANS OUR COMPONENT ALSO HAS TO BE A SINGLETON (ViewModelComponent)
     @TypeOfContext(CONTEXT_APP)
-    fun provideSharedPreferences(app: Application): SharePreferencesHelper {
+    open fun provideSharedPreferences(app: Application): SharePreferencesHelper { //open bc we will be overriding this funciton in our unit tests
         return SharePreferencesHelper(app)
     }
 
