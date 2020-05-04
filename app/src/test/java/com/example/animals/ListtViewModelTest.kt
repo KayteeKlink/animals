@@ -2,10 +2,8 @@ package com.example.animals
 
 import android.app.Application
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.example.animals.di.ApiModule
 import com.example.animals.di.AppModule
 import com.example.animals.di.DaggerViewModelComponent
-import com.example.animals.di.PrefsModule
 import com.example.animals.model.AnimalApiService
 import com.example.animals.util.SharePreferencesHelper
 import com.example.animals.viewmodel.ListViewModel
